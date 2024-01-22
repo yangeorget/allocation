@@ -5,7 +5,7 @@ from main import (
     verify_allocation_ok,
     verify_allocation_user_max_offer_nb,
     verify_allocation_offer_max_user_nb,
-    compute_user_scores,
+    _compute_user_allocations,
     compute_offer_allocations,
     Allocator,
 )
@@ -30,36 +30,27 @@ def test_verify_allocation_offer_max_user_nb():
     scores = np.array([[0.3, 0.2, 0.1], [0.1, 0.2, 0.3]])
     offer_max_user_nb = np.array([[0.3, 0.3, 0.3]])
     good_allocation = np.array([[True, False, False], [False, True, False]])
-    assert verify_allocation_offer_max_user_nb(
-        good_allocation, scores, offer_max_user_nb
-    )
+    assert verify_allocation_offer_max_user_nb(good_allocation, scores, offer_max_user_nb)
     bad_allocation = np.array([[True, True, False], [False, True, False]])
-    assert not verify_allocation_offer_max_user_nb(
-        bad_allocation, scores, offer_max_user_nb
-    )
+    assert not verify_allocation_offer_max_user_nb(bad_allocation, scores, offer_max_user_nb)
 
 
-def test_compute_user_scores():
+def test__compute_user_allocations():
     scores = np.array([[0.4, 0.3, 0.2, 0.1], [0.1, 0.2, 0.3, 0.4]])
-    scores = compute_user_scores(scores, 2)
-    assert np.all(scores == np.array([0.3, 0.3]))
+    allocations = _compute_user_allocations(scores, 1, 2)
+    assert np.all(allocations == np.array([[True, True, False, False], [False, False, True, True]]))
 
 
 def test_compute_offer_allocations():
     scores = np.array([[0.4, 0.2, 0.1], [0.1, 0.2, 0.2], [0.2, 0.3, 0.1]])
     allocations = compute_offer_allocations(scores, np.array([0.4, 0.4, 0.6]))
-    assert np.all(
-        allocations
-        == np.array([[True, True, True], [False, True, True], [False, False, True]])
-    )
+    assert np.all(allocations == np.array([[True, True, True], [False, True, True], [False, False, True]]))
 
 
 def test_solve_constraints():
     np.random.seed(seed=0)
     ok = np.array([[True, True, True], [True, True, True], [True, True, True]])
-    scores = np.array([[.7, .8, .9], [.4, .5, .6], [.1, .2, .3]])
+    scores = np.array([[0.7, 0.8, 0.9], [0.4, 0.5, 0.6], [0.1, 0.2, 0.3]])
     permutation, allocations, sum_score = Allocator(2, 1.5, ok, scores).solve()
-    assert np.all(allocations == np.array(
-            [[False, True, True], [False, True, True], [False, True, False]]
-        ))
+    assert np.all(allocations == np.array([[False, True, True], [False, True, True], [False, True, False]]))
     assert sum_score == pytest.approx(2.4)

@@ -1,8 +1,10 @@
+import random
+
 import numpy as np
 
 
 def main():
-    user_nb = 10000
+    user_nb = 1000
     offer_nb = 100
     max_offer_nb = 20
     offer_max_user_nb = np.random.randint(1, user_nb, size=offer_nb)
@@ -35,49 +37,48 @@ class Allocator:
         return self.solve_permutation(permutation)
 
     def solve_permutation(self, permutation):
-        print(f"solve_permutation({permutation})")
+        # print(f"solve_permutation({permutation})")
         shuffled_scores = self.scores[permutation]
         shuffled_ok = self.ok[permutation]
         allocations, sum_score = self.solve_constraints(shuffled_ok, shuffled_scores)
         return permutation, allocations, sum_score
 
     def solve_constraints(self, shuffled_ok, shuffled_scores):
-        print(f"solve_constraints({shuffled_ok}, {shuffled_scores})")
+        # print(f"solve_constraints({shuffled_ok}, {shuffled_scores})")
         allocations = shuffled_ok
         scores = shuffled_scores
         update_scores(scores, allocations)
-        update_allocations(
-            allocations, scores >= compute_user_scores(scores, self.max_offer_nb)
-        )
+        update_allocations(allocations, compute_user_allocations(scores, self.max_offer_nb))
         update_scores(scores, allocations)
-        update_allocations(
-            allocations, compute_offer_allocations(scores, self.offer_max_user_nb)
-        )
+        update_allocations(allocations, compute_offer_allocations(scores, self.offer_max_user_nb))
         update_scores(scores, allocations)
         assert verify_allocation_ok(allocations, shuffled_ok)
         assert verify_allocation_user_max_offer_nb(allocations, self.max_offer_nb)
-        assert verify_allocation_offer_max_user_nb(
-            allocations, shuffled_scores, self.offer_max_user_nb
-        )
+        assert verify_allocation_offer_max_user_nb(allocations, shuffled_scores, self.offer_max_user_nb)
         return allocations, np.sum(scores)
 
 
-def update_allocations(allocations, new_allocations):
-    np.logical_and(allocations, new_allocations, out=allocations)
-    # print(allocations)
+def compute_user_allocations(scores, max_offer_nb):
+    top = random.randint(1, 2)
+    bottom = max_offer_nb + top - 1
+    return _compute_user_allocations(scores, top, bottom)
 
-def update_scores(scores, allocations):
-    np.minimum(scores, allocations, out=scores)
-    # print(scores)
+
+def _compute_user_allocations(scores, top, bottom):
+    partition = np.partition(scores, [-bottom, -top], axis=1)
+    return np.logical_and(scores >= partition[:, [-bottom]], scores <= partition[:, [-top]])
+
 
 def compute_offer_allocations(scores, offer_max_user_nb):
     return np.cumsum(scores, axis=0) <= offer_max_user_nb
 
 
-def compute_user_scores(scores, max_offer_nb):
-    return np.partition(scores, -max_offer_nb, axis=1)[:, -max_offer_nb].reshape(
-        scores.shape[0], 1
-    )
+def update_allocations(allocations, new_allocations):
+    np.logical_and(allocations, new_allocations, out=allocations)
+
+
+def update_scores(scores, allocations):
+    np.minimum(scores, allocations, out=scores)
 
 
 def verify_allocation_ok(allocation, ok):
