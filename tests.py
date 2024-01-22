@@ -5,7 +5,7 @@ from main import (
     verify_allocation_ok,
     verify_allocation_user_max_offer_nb,
     verify_allocation_offer_max_user_nb,
-    _compute_user_allocations,
+    compute_user_allocations,
     compute_offer_allocations,
     Allocator,
 )
@@ -37,7 +37,7 @@ def test_verify_allocation_offer_max_user_nb():
 
 def test__compute_user_allocations():
     scores = np.array([[0.4, 0.3, 0.2, 0.1], [0.1, 0.2, 0.3, 0.4]])
-    allocations = _compute_user_allocations(scores, 1, 2)
+    allocations = compute_user_allocations(scores, 2)
     assert np.all(allocations == np.array([[True, True, False, False], [False, False, True, True]]))
 
 

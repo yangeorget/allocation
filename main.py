@@ -4,17 +4,19 @@ import numpy as np
 
 
 def main():
+    exploration_factor = 5
     user_nb = 1000
     offer_nb = 100
     max_offer_nb = 20
     offer_max_user_nb = np.random.randint(1, user_nb, size=offer_nb)
     ok = np.random.rand(user_nb, offer_nb) > (1.0 / offer_nb)
     scores = np.random.random((user_nb, offer_nb))
-    Allocator(max_offer_nb, offer_max_user_nb, ok, scores).optimize()
+    Allocator(max_offer_nb, offer_max_user_nb, ok, scores, exploration_factor).optimize()
 
 
 class Allocator:
-    def __init__(self, max_offer_nb, offer_max_user_nb, ok, scores):
+    def __init__(self, max_offer_nb, offer_max_user_nb, ok, scores, exploration_factor=0):
+        self.exploration_factor = exploration_factor
         self.max_offer_nb = max_offer_nb
         self.offer_max_user_nb = offer_max_user_nb
         self.ok = ok
@@ -48,7 +50,7 @@ class Allocator:
         allocations = shuffled_ok
         scores = shuffled_scores
         update_scores(scores, allocations)
-        update_allocations(allocations, compute_user_allocations(scores, self.max_offer_nb))
+        update_allocations(allocations, compute_user_allocations(scores, self.max_offer_nb, self.exploration_factor))
         update_scores(scores, allocations)
         update_allocations(allocations, compute_offer_allocations(scores, self.offer_max_user_nb))
         update_scores(scores, allocations)
@@ -58,13 +60,9 @@ class Allocator:
         return allocations, np.sum(scores)
 
 
-def compute_user_allocations(scores, max_offer_nb):
-    top = random.randint(1, 2)
+def compute_user_allocations(scores, max_offer_nb, exploration_factor=0):
+    top = 1 + random.randint(0, exploration_factor)
     bottom = max_offer_nb + top - 1
-    return _compute_user_allocations(scores, top, bottom)
-
-
-def _compute_user_allocations(scores, top, bottom):
     partition = np.partition(scores, [-bottom, -top], axis=1)
     return np.logical_and(scores >= partition[:, [-bottom]], scores <= partition[:, [-top]])
 
