@@ -11,14 +11,6 @@ def main():
     Allocator(max_offer_nb, offer_max_user_nb, ok, scores).optimize()
 
 
-def main2():
-    max_offer_nb = 2
-    offer_max_user_nb = 3
-    ok = np.array([[True, True, True], [True, True, True], [True, True, True]])
-    scores = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
-    Allocator(max_offer_nb, offer_max_user_nb, ok, scores).solve()
-
-
 class Allocator:
     def __init__(self, max_offer_nb, offer_max_user_nb, ok, scores):
         self.max_offer_nb = max_offer_nb
@@ -43,14 +35,14 @@ class Allocator:
         return self.solve_permutation(permutation)
 
     def solve_permutation(self, permutation):
+        print(f"solve_permutation({permutation})")
         shuffled_scores = self.scores[permutation]
-        print(shuffled_scores)
         shuffled_ok = self.ok[permutation]
-        print(shuffled_ok)
         allocations, sum_score = self.solve_constraints(shuffled_ok, shuffled_scores)
         return permutation, allocations, sum_score
 
     def solve_constraints(self, shuffled_ok, shuffled_scores):
+        print(f"solve_constraints({shuffled_ok}, {shuffled_scores})")
         allocations = shuffled_ok
         scores = shuffled_scores
         update_scores(scores, allocations)
@@ -70,47 +62,38 @@ class Allocator:
         return allocations, np.sum(scores)
 
 
-@staticmethod
 def update_allocations(allocations, new_allocations):
     np.logical_and(allocations, new_allocations, out=allocations)
-    print(allocations)
+    # print(allocations)
 
-
-@staticmethod
 def update_scores(scores, allocations):
     np.minimum(scores, allocations, out=scores)
-    print(scores)
+    # print(scores)
 
-
-@staticmethod
 def compute_offer_allocations(scores, offer_max_user_nb):
     return np.cumsum(scores, axis=0) <= offer_max_user_nb
 
 
-@staticmethod
 def compute_user_scores(scores, max_offer_nb):
     return np.partition(scores, -max_offer_nb, axis=1)[:, -max_offer_nb].reshape(
         scores.shape[0], 1
     )
 
 
-@staticmethod
 def verify_allocation_ok(allocation, ok):
     constraints = np.logical_or(np.logical_not(allocation), ok)
     return np.all(constraints)
 
 
-@staticmethod
 def verify_allocation_user_max_offer_nb(allocation, max_offer_nb):
     offer_nb_by_user = np.sum(allocation, axis=1)
     return np.all(offer_nb_by_user <= max_offer_nb)
 
 
-@staticmethod
 def verify_allocation_offer_max_user_nb(allocation, scores, offer_max_user_nb):
     user_nb_by_offer = np.sum(np.multiply(allocation, scores), axis=0)
     return np.all(user_nb_by_offer <= offer_max_user_nb)
 
 
 if __name__ == "__main__":
-    main2()
+    main()

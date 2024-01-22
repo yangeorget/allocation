@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from main import (
     verify_allocation_ok,
@@ -54,11 +55,11 @@ def test_compute_offer_allocations():
 
 
 def test_solve_constraints():
+    np.random.seed(seed=0)
     ok = np.array([[True, True, True], [True, True, True], [True, True, True]])
-    scores = np.array([[1, 1, 1], [1, 1, 1], [1, 1, 1]])
-    assert np.all(
-        Allocator(2, 3, ok, scores).solve()
-        == np.array(
-            [[False, False, False], [False, False, False], [False, False, False]]
-        )
-    )
+    scores = np.array([[.7, .8, .9], [.4, .5, .6], [.1, .2, .3]])
+    permutation, allocations, sum_score = Allocator(2, 1.5, ok, scores).solve()
+    assert np.all(allocations == np.array(
+            [[False, True, True], [False, True, True], [False, True, False]]
+        ))
+    assert sum_score == pytest.approx(2.4)
