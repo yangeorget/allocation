@@ -41,7 +41,7 @@ class Allocator:
 
     def solve(self):
         user_nb = self.ok.shape[0]
-        permutation = np.random.permutation(user_nb) #np.arange(user_nb)
+        permutation = np.random.permutation(user_nb)  # np.arange(user_nb)
         return self.solve_permutation(permutation)
 
     def solve_permutation(self, permutation):
