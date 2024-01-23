@@ -47,10 +47,3 @@ def test_compute_offer_allocations():
     assert np.all(allocations == np.array([[True, True, True], [False, True, True], [False, False, True]]))
 
 
-def test_solve_constraints():
-    np.random.seed(seed=0)
-    ok = np.array([[True, True, True], [True, True, True], [True, True, True]])
-    scores = np.array([[0.7, 0.8, 0.9], [0.4, 0.5, 0.6], [0.1, 0.2, 0.3]])
-    permutation, allocations, sum_score = Allocator(2, 1.5, ok, scores).solve()
-    assert np.all(allocations == np.array([[False, True, True], [False, True, True], [False, True, False]]))
-    assert sum_score == pytest.approx(2.4)

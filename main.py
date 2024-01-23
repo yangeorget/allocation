@@ -27,13 +27,12 @@ class Allocator:
         best_score_sum = 0
         for iteration in range(100):
             # print(f"iteration {iteration}")
-            permutation, allocations, score_sum = self.solve()
+            allocations, score_sum = self.solve()
             if score_sum > best_score_sum:
                 best_score_sum = score_sum
-                best_permutation = permutation
                 best_allocations = allocations
                 print(f"iteration {iteration}: {best_score_sum}")
-        return best_permutation, best_allocations, best_score_sum
+        return best_allocations, best_score_sum
 
     def display(self, allocations):
         pyplot.matshow(allocations)
@@ -41,18 +40,12 @@ class Allocator:
 
     def solve(self):
         user_nb = self.ok.shape[0]
-        permutation = np.random.permutation(user_nb)  # np.arange(user_nb)
-        return self.solve_permutation(permutation)
-
-    def solve_permutation(self, permutation):
-        # print(f"solve_permutation({permutation})")
+        permutation = np.random.permutation(user_nb)
         shuffled_scores = self.scores[permutation]
         shuffled_ok = self.ok[permutation]
-        allocations, sum_score = self.solve_constraints(shuffled_ok, shuffled_scores)
-        # inverse_permutation = self.inverse_permutation(permutation)
-        # print(f"inverse_permutation={inverse_permutation}")
-        # self.display(allocations[inverse_permutation])
-        return permutation, allocations, sum_score
+        shuffled_allocations, sum_score = self.solve_constraints(shuffled_ok, shuffled_scores)
+        inverse_permutation = self.inverse_permutation(permutation)
+        return shuffled_allocations[inverse_permutation], sum_score
 
     def inverse_permutation(self, a):
         b = np.arange(a.shape[0])
