@@ -12,9 +12,10 @@ class Allocator:
         self.init_allocations = init_allocations
         self.init_scores = init_scores
 
-    def optimize(self):
+    def optimize(self, nb_iter):
+        print(self.name())
         best_score_sum = 0
-        for iteration in range(100):
+        for iteration in range(nb_iter):
             # print(f"iteration {iteration}")
             allocations, scores = self.solve()
             assert Allocator.verify_allocation_ok(allocations, self.init_allocations)
@@ -29,6 +30,9 @@ class Allocator:
 
     def solve(self):
         pass
+
+    def name(self):
+        return None
 
     @staticmethod
     def compute_user_allocations(scores, max_offer_nb, exploration_factor=0):

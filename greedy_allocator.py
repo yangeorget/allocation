@@ -4,9 +4,12 @@ from allocator import Allocator
 
 
 class GreedyAllocator(Allocator):
-    def __init__(self, max_offer_nb, offer_max_user_nb, ok, scores):
-        self.exploration_factor = 3
+    def __init__(self, max_offer_nb, offer_max_user_nb, ok, scores, exploration_factor=0):
+        self.exploration_factor = exploration_factor
         super().__init__(max_offer_nb, offer_max_user_nb, ok, scores)
+
+    def name(self):
+        return f"GreedyAllocator(exploration_factor={self.exploration_factor})"
 
     def solve(self):
         permutation = np.random.permutation(self.user_nb)
