@@ -1,7 +1,4 @@
 import numpy as np
-import pytest
-
-from allocator import Allocator
 from greedy_allocator import GreedyAllocator
 
 

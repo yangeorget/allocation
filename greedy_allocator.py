@@ -9,7 +9,7 @@ class GreedyAllocator(Allocator):
         super().__init__(max_offer_nb, offer_max_user_nb, ok, scores)
 
     def name(self):
-        return f"GreedyAllocator(exploration_factor={self.exploration_factor})"
+        return f"GreedyAllocator_{self.exploration_factor}"
 
     def solve(self):
         permutation = np.random.permutation(self.user_nb)

@@ -1,6 +1,5 @@
 import numpy as np
 
-from allocator import Allocator
 from greedy_allocator import GreedyAllocator
 
 
@@ -11,7 +10,7 @@ class RepairAllocator(GreedyAllocator):
         return shuffled_allocations, shuffled_scores
 
     def name(self):
-        return f"RepairAllocator(exploration_factor={self.exploration_factor})"
+        return f"RepairAllocator_{self.exploration_factor}"
 
     def improve_solution(self, allocations, scores, permutation):
         old_scores = self.init_scores[permutation]
