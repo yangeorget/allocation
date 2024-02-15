@@ -27,3 +27,8 @@ class Allocator(Verifier):
 
     def update_costs(self, costs, allocations):
         np.multiply(costs, allocations, out=costs)
+
+    def inverse_permutation(self, a):
+        b = np.arange(a.shape[0])
+        b[a] = b.copy()
+        return b

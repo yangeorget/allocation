@@ -4,16 +4,6 @@ from greedy_allocator import GreedyAllocator
 
 
 class RandomAllocator(GreedyAllocator):
-    def solve(self):
-        costs = self.scores * self.generosities * self.bools
-        user_allocations = self.compute_user_allocations(costs)
-        self.update_costs(costs, user_allocations)
-        families_allocations = self.compute_family_allocations(costs)
-        self.update_costs(costs, families_allocations)
-        offer_allocations = self.compute_offer_allocations(costs)
-        self.update_costs(costs, offer_allocations)
-        return costs > 0, costs
-
     def compute_user_allocations(self, costs):
         offer_indices = np.arange(self.offer_nb)
         allocations = []
