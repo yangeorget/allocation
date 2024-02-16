@@ -6,8 +6,8 @@ from allocator import Allocator
 
 
 class SkipAllocator(Allocator):
-    def solve(self, best_evaluation):
-        costs = self.scores * self.generosities * self.bools
+    def solve(self, init_costs, best_result):
+        costs = init_costs.copy()
         user_offers = np.ones(self.user_nb) * self.offer_max_nb
         offer_budgets = self.budgets.copy()
         for idx in np.nditer(np.argsort(-costs, axis=None)):

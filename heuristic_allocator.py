@@ -6,17 +6,15 @@ from allocator import Allocator
 
 
 class HeuristicAllocator(Allocator):
-    def solve(self, best_evaluation):
-        costs = self.scores * self.generosities * self.bools
+    def solve(self, init_costs, best_result):
+        costs = init_costs.copy()
         user_offers = np.ones(self.user_nb) * self.offer_max_nb
         offer_budgets = self.budgets.copy()
-        offer_family_size = [
-            np.count_nonzero(self.families == self.families[idx]) for idx in range(self.offer_nb)
-        ]
-        offer_family_weight = (offer_family_size - np.min(offer_family_size) + 1) ** 1/3
+        # offer_family_size = [np.count_nonzero(self.families == self.families[idx]) for idx in range(self.offer_nb)]
+        # offer_family_weight = (offer_family_size - np.min(offer_family_size) + 1) ** 1 / 4
         for idx in np.nditer(
             np.argsort(
-                -(costs / offer_family_weight) * (1 + np.random.rand(self.user_nb, self.offer_nb) / 10),
+                -costs * (1 + np.random.rand(self.user_nb, self.offer_nb) / 3),
                 axis=None,
             )
         ):

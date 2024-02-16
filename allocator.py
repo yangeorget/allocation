@@ -4,32 +4,20 @@ from verifier import Verifier
 
 
 class Allocator(Verifier):
-    def __init__(
-        self,
-        offer_max_nb=0,
-        families=None,
-        budgets=None,
-        generosities=None,
-        bools=None,
-        scores=None,
-    ):
-        super().__init__(offer_max_nb, families, budgets, generosities, bools, scores)
-        offer_family_size = [
-            np.count_nonzero(self.families == self.families[idx]) for idx in range(self.offer_nb)
-        ]
-
     def optimize(self, nb_iter):
-        best_evaluation = 0
+        init_costs = self.scores * self.generosities * self.bools
+        best_result = {"evaluation": 0, "allocations": None, "costs": None}
         for iteration in range(nb_iter):
-            allocations, costs = self.solve(best_evaluation)
+            allocations, costs = self.solve(init_costs, best_result)
             if allocations is not None:
-                self.assert_allocation_constraints(allocations)
+                # self.assert_allocation_constraints(allocations)
                 evaluation = self.evaluate(costs)
-                if evaluation > best_evaluation:
-                    best_evaluation = evaluation
-                    best_allocations = allocations
-                    print(f"iteration {iteration}: {best_evaluation}")
-        return best_allocations, best_evaluation
+                if evaluation > best_result["evaluation"]:
+                    best_result["evaluation"] = evaluation
+                    best_result["allocations"] = allocations
+                    best_result["costs"] = costs
+                    print(f"iteration {iteration}: {evaluation}")
+        return best_result
 
     def save(self, name, allocations):
         np.savetxt(name, allocations, delimiter=",", fmt="%d")

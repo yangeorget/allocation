@@ -4,7 +4,7 @@ from allocator import Allocator
 
 
 class GreedyAllocator(Allocator):
-    def solve(self, best_evaluation):
+    def solve(self, init_costs, best_result):
         permutation = np.random.permutation(self.user_nb)
         shuffled_costs = self.solve_permutation(permutation)
         inverse_permutation = self.inverse_permutation(permutation)

@@ -31,7 +31,8 @@ if __name__ == "__main__":
     allocator_class = getattr(importlib.import_module(module_name), class_name)
     allocator = allocator_class()
     allocator.init_from_files(args.data)
-    allocator.compute_problem_stats()
-    allocations, _ = allocator.optimize(args.iterations)
+    # allocator.compute_problem_stats()
+    best_result = allocator.optimize(args.iterations)
+    allocations = best_result["allocations"]
     pprint(allocator.compute_solution_stats(allocations), expand_all=True)
     allocator.save(args.output, allocations)
