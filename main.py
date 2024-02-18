@@ -32,7 +32,12 @@ if __name__ == "__main__":
     allocator = allocator_class()
     allocator.init_from_files(args.data)
     # allocator.compute_problem_stats()
-    best_result = allocator.optimize(args.iterations)
+    best_result, optimize_stats = allocator.optimize(args.iterations)
     allocations = best_result["allocations"]
-    pprint(allocator.compute_solution_stats(allocations), expand_all=True)
+    allocations_stats = allocator.compute_solution_stats(allocations)
+    problem_stats = allocator.compute_problem_stats()
+    pprint(
+        {"optimize_stats": optimize_stats, "problem_stats": problem_stats, "allocations_stats": allocations_stats},
+        expand_all=True,
+    )
     allocator.save(args.output, allocations)
