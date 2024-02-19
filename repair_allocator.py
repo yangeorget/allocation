@@ -1,4 +1,3 @@
-
 import numpy as np
 
 from hidden.allocation.heuristic_allocator import HeuristicAllocator
@@ -15,6 +14,7 @@ class RepairAllocator(HeuristicAllocator):
                 if best_costs[user_idx][offer_idx] > 0:
                     best_offer_idx = None
                     best_cost = 0.0
+                    # a change in a family is easy to make thus we want to make the best choice in each family
                     for other_offer_idx in np.where(
                         (self.families == self.families[offer_idx])
                         & (init_costs[user_idx] > 0)
