@@ -5,7 +5,9 @@ from verifier import Verifier
 
 class Allocator(Verifier):
     def optimize(self, iteration_nb):
-        init_costs = self.scores * self.generosities * self.bools
+        init_costs = self.scores * self.generosities
+        self.update_costs_with_allocations(init_costs, self.bools)
+        init_costs = self.update_costs_with_budgets(init_costs, self.budgets)
         best_result = {"evaluation": 0, "allocations": None, "costs": None}
         early_stop_nb = 0
         for iteration in range(iteration_nb):
@@ -31,8 +33,11 @@ class Allocator(Verifier):
     def evaluate(self, costs):
         return np.sum(costs)
 
-    def update_costs(self, costs, allocations):
+    def update_costs_with_allocations(self, costs, allocations):
         np.multiply(costs, allocations, out=costs)
+
+    def update_costs_with_budgets(self, costs, budgets):
+        return np.where(costs > budgets, costs, 0)
 
     def inverse_permutation(self, a):
         b = np.arange(a.shape[0])

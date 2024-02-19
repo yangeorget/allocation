@@ -14,11 +14,11 @@ class GreedyAllocator(Allocator):
     def solve_permutation(self, permutation):
         costs = self.scores[permutation] * self.generosities * self.bools[permutation]
         user_allocations = self.compute_user_allocations(costs)
-        self.update_costs(costs, user_allocations)
+        self.update_costs_with_allocations(costs, user_allocations)
         families_allocations = self.compute_family_allocations(costs)
-        self.update_costs(costs, families_allocations)
+        self.update_costs_with_allocations(costs, families_allocations)
         offer_allocations = self.compute_offer_allocations(costs)
-        self.update_costs(costs, offer_allocations)
+        self.update_costs_with_allocations(costs, offer_allocations)
         return costs
 
     def compute_user_allocations(self, costs):

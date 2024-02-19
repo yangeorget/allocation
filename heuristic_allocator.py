@@ -8,9 +8,9 @@ class HeuristicAllocator(Allocator):
         max_cost = np.sum(init_costs)
         user_offers = np.ones((self.user_nb, 1)) * self.offer_max_nb
         offer_budgets = self.budgets.copy()
-        randomized_costs = -init_costs * (1 + np.random.rand(self.user_nb, self.offer_nb) / 3)
+        index_weights = -init_costs * (1 + np.random.rand(self.user_nb, self.offer_nb) / offer_budgets)
         costs = init_costs.copy()
-        for idx in np.nditer(np.argsort(randomized_costs, axis=None)[: np.count_nonzero(init_costs)]):
+        for idx in np.nditer(np.argsort(index_weights, axis=None)[: np.count_nonzero(index_weights)]):
             user_idx, offer_idx = np.unravel_index(idx, init_costs.shape)
             if costs[user_idx, offer_idx] > 0.0:
                 if costs[user_idx, offer_idx] > offer_budgets[offer_idx]:
