@@ -9,13 +9,13 @@ class Allocator(Verifier):
         best_result = {"evaluation": 0, "allocations": None, "costs": None}
         early_stop_nb = 0
         for iteration in range(iteration_nb):
-            allocations, costs = self.solve(init_costs, best_result)
-            if allocations is not None:
+            _, costs = self.solve(init_costs, best_result)
+            if costs is not None:
                 # self.assert_allocation_constraints(allocations)
                 evaluation = self.evaluate(costs)
                 if evaluation > best_result["evaluation"]:
                     best_result["evaluation"] = evaluation
-                    best_result["allocations"] = allocations
+                    best_result["allocations"] = costs > 0
                     best_result["costs"] = costs
                     print(f"iteration {iteration}: {evaluation}")
             else:
