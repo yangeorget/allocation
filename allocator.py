@@ -12,7 +12,7 @@ class Allocator(Verifier):
         for iteration in range(iteration_nb):
             _, costs = self.solve(init_costs, best_result)
             if costs is not None:
-                # self.assert_allocation_constraints(allocations)
+                self.assert_allocation_constraints(costs > 0)
                 evaluation = self.evaluate(costs)
                 if evaluation > best_result["evaluation"]:
                     best_result["evaluation"] = evaluation
