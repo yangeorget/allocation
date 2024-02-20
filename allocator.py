@@ -7,10 +7,14 @@ class Allocator(Verifier):
     def optimize(self, iteration_nb):
         init_costs = self.scores * self.generosities * self.bools
         init_costs = np.where(init_costs <= self.budgets, init_costs, 0.0)
+        family_costs = np.zeros((self.user_nb, self.family_nb), dtype=float)
+        for user_idx in range(self.user_nb):
+            for family_idx in range(self.family_nb):
+                family_costs[user_idx, family_idx] = np.max(init_costs[user_idx, self.families == family_idx])
         best_result = {"evaluation": 0, "allocations": None, "costs": None}
         early_stop_nb = 0
         for iteration in range(iteration_nb):
-            _, costs = self.solve(init_costs, best_result)
+            _, costs = self.solve(init_costs, family_costs, best_result)
             if costs is not None:
                 self.assert_allocation_constraints(costs > 0)
                 evaluation = self.evaluate(costs)
@@ -26,7 +30,7 @@ class Allocator(Verifier):
     def save(self, name, allocations):
         np.savetxt(name, allocations, delimiter=",", fmt="%d")
 
-    def solve(self, best_evaluation):
+    def solve(self, init_costs, family_cost, best_evaluation):
         pass
 
     def evaluate(self, costs):
