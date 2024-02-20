@@ -4,9 +4,10 @@ from hidden.allocation.heuristic_allocator import HeuristicAllocator
 
 
 class RepairAllocator(HeuristicAllocator):
-    def solve(self, init_costs, best_result):
-        best_allocations = np.loadtxt(f"allocations/stephkyl/allocations.csv", delimiter=",", dtype=bool)
-        best_costs = init_costs * best_allocations
+    def solve(self, init_costs, family_costs, best_result):
+        _, best_costs = super().solve(init_costs, family_costs, best_result)
+        if best_costs is None:
+            return None, None  # cannot repair
         offer_budgets = self.budgets - np.sum(best_costs, axis=0)
         for idx in np.where(best_costs > 0)[0]:
             user_idx, offer_idx = np.unravel_index(idx, init_costs.shape)
